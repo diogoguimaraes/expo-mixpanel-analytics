@@ -1,12 +1,27 @@
-import { Platform, Dimensions, AsyncStorage } from "react-native";
+import 'react-native-get-random-values';
+import * as Device from 'expo-device';
+import * as SecureStore from 'expo-secure-store';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Constants from "expo-constants";
+import { Platform, Dimensions } from "react-native";
 import { Buffer } from "buffer";
+import { v4 as uuidv4 } from 'uuid';
 
 const { width, height } = Dimensions.get("window");
 
 const MIXPANEL_API_URL = "https://api.mixpanel.com";
 const ASYNC_STORAGE_KEY = "mixpanel:super:props";
 const isIosPlatform = Platform.OS === "ios";
+
+async function getExistingUUID() {
+  const existingUUID = await SecureStore.getItemAsync('secure_deviceid');
+
+  return existingUUID;
+}
+
+async function setExistingUUID(newUuid) {
+  await SecureStore.setItemAsync('secure_deviceid', JSON.stringify(newUuid));
+}
 
 export class ExpoMixpanelAnalytics {
   ready = false;
@@ -19,31 +34,48 @@ export class ExpoMixpanelAnalytics {
   appVersion?: string;
   screenSize?: string;
   platform?: string;
-  model?: string;
+  model?: string | null;
   osVersion: string | number;
   queue: any[];
   superProps: any = {};
 
   constructor(token) {
+    getExistingUUID()
+        .then((uuid) => {
+          if (uuid) {
+            this.clientId = uuid;
+
+            return;
+          }
+
+          const newUuid = uuidv4();
+          const newUuidString = JSON.stringify(newUuid);
+
+          this.clientId = newUuidString;
+
+          setExistingUUID(newUuidString)
+            .then()
+            .catch((error) => console.log(error));
+        })
+        .catch((error) => console.log(error));
+  
     this.ready = false;
     this.queue = [];
-
     this.token = token;
     this.userId = null;
-    this.clientId = Constants.deviceId;
     this.osVersion = Platform.Version;
     this.superProps;
 
     Constants.getWebViewUserAgentAsync().then(userAgent => {
       this.userAgent = userAgent;
-      this.appName = Constants.manifest.name;
-      this.appId = Constants.manifest.slug;
-      this.appVersion = Constants.manifest.version;
+      this.appName = Constants.manifest?.name;
+      this.appId = Constants.manifest?.slug;
+      this.appVersion = Constants.manifest?.version;
       this.screenSize = `${width}x${height}`;
 
       if (isIosPlatform && Constants.platform && Constants.platform.ios) {
         this.platform = Constants.platform.ios.platform;
-        this.model = Constants.platform.ios.model;
+        this.model = Device.modelName;
       } else {
         this.platform = "android";
       }
@@ -68,6 +100,17 @@ export class ExpoMixpanelAnalytics {
     try {
       AsyncStorage.setItem(ASYNC_STORAGE_KEY, JSON.stringify(props));
     } catch {}
+  }
+
+  alias(alias: string) {
+    this.queue.push({
+      name: '$create_alias',
+      props: {
+        alias,
+      }
+    });
+
+    this._flush();
   }
 
   track(name: string, props?: any) {
@@ -176,8 +219,9 @@ export class ExpoMixpanelAnalytics {
     }
 
     const buffer = new Buffer(JSON.stringify(data)).toString("base64");
+    const isIdentityAPI = event.name === '$create_alias' ? '#identity-create-alias' : '';
 
-    return fetch(`${MIXPANEL_API_URL}/track/?data=${buffer}`);
+    return fetch(`${MIXPANEL_API_URL}/track${isIdentityAPI}/?data=${buffer}`);
   }
 
   _pushProfile(data) {

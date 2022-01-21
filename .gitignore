@@ -5,6 +5,5 @@ yarn-debug.log*
 yarn-error.log*
 .idea/
 node_modules/
-dist
 tsconfig.tsbuildinfo
 .DS_Store
