@@ -69,7 +69,7 @@ var ExpoMixpanelAnalytics = (function () {
             _this.appVersion = (_c = Constants.manifest) === null || _c === void 0 ? void 0 : _c.version;
             _this.screenSize = width + "x" + height;
             if (isIosPlatform && Constants.platform && Constants.platform.ios) {
-                _this.platform = Constants.platform.ios.platform;
+                _this.platform = Device.modelId;
                 _this.model = Device.modelName;
             }
             else {
