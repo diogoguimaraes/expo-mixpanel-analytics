@@ -11,7 +11,6 @@ const { width, height } = Dimensions.get("window");
 
 const MIXPANEL_API_URL = "https://api.mixpanel.com";
 const ASYNC_STORAGE_KEY = "mixpanel:super:props";
-const isIosPlatform = Platform.OS === "ios";
 
 async function getExistingUUID() {
   const existingUUID = await SecureStore.getItemAsync('secure_deviceid');
@@ -72,13 +71,8 @@ export class ExpoMixpanelAnalytics {
       this.appId = Constants.manifest?.slug;
       this.appVersion = Constants.manifest?.version;
       this.screenSize = `${width}x${height}`;
-
-      if (isIosPlatform && Constants.platform && Constants.platform.ios) {
-        this.platform = Device.modelId;
-        this.model = Device.modelName;
-      } else {
-        this.platform = "android";
-      }
+      this.platform = Device.modelId;
+      this.model = Device.modelName;
 
       AsyncStorage.getItem(ASYNC_STORAGE_KEY, (_, result) => {
         if (result) {

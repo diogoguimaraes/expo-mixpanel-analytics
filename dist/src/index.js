@@ -10,7 +10,6 @@ import { v4 as uuidv4 } from 'uuid';
 var _a = Dimensions.get("window"), width = _a.width, height = _a.height;
 var MIXPANEL_API_URL = "https://api.mixpanel.com";
 var ASYNC_STORAGE_KEY = "mixpanel:super:props";
-var isIosPlatform = Platform.OS === "ios";
 function getExistingUUID() {
     return __awaiter(this, void 0, void 0, function () {
         var existingUUID;
@@ -68,13 +67,8 @@ var ExpoMixpanelAnalytics = (function () {
             _this.appId = (_b = Constants.manifest) === null || _b === void 0 ? void 0 : _b.slug;
             _this.appVersion = (_c = Constants.manifest) === null || _c === void 0 ? void 0 : _c.version;
             _this.screenSize = width + "x" + height;
-            if (isIosPlatform && Constants.platform && Constants.platform.ios) {
-                _this.platform = Device.modelId;
-                _this.model = Device.modelName;
-            }
-            else {
-                _this.platform = "android";
-            }
+            _this.platform = Device.modelId;
+            _this.model = Device.modelName;
             AsyncStorage.getItem(ASYNC_STORAGE_KEY, function (_, result) {
                 if (result) {
                     try {
