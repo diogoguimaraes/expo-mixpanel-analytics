@@ -6,8 +6,9 @@
   "types": "dist/src/index.d.ts",
   "private": false,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc"
+    "build": "tsc",
+    "clean": "rm -rf node_modules && rm -rf yarn.lock && rm -rf dist && yarn cache clean",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
@@ -37,12 +38,12 @@
     "url": "https://github.com/codekadiya/expo-mixpanel-analytics/issues"
   },
   "dependencies": {
-    "@react-native-async-storage/async-storage": "1.17.3",
+    "@react-native-async-storage/async-storage": "1.17.11",
     "buffer": "^5.2.1",
-    "expo-constants": "~13.2.4",
-    "expo-device": "~4.3.0",
-    "expo-secure-store": "11.2.0",
-    "react-native-get-random-values": "^1.7.2",
+    "expo-constants": "~14.0.2",
+    "expo-device": "~5.0.0",
+    "expo-secure-store": "12.0.0",
+    "react-native-get-random-values": "1.8.0",
     "tslib": "^1.10.0",
     "uuid": "^8.3.2"
   },
@@ -52,7 +53,6 @@
     "react-native": "*"
   },
   "devDependencies": {
-    "@types/expo": "^32.0.10",
     "@types/react-native": "^0.57.43",
     "rimraf": "^2.6.3",
     "typescript": "^3.4.3"
