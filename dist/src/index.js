@@ -63,9 +63,9 @@ var ExpoMixpanelAnalytics = (function () {
         Constants.getWebViewUserAgentAsync().then(function (userAgent) {
             var _a, _b, _c;
             _this.userAgent = userAgent;
-            _this.appName = (_a = Constants.manifest) === null || _a === void 0 ? void 0 : _a.name;
-            _this.appId = (_b = Constants.manifest) === null || _b === void 0 ? void 0 : _b.slug;
-            _this.appVersion = (_c = Constants.manifest) === null || _c === void 0 ? void 0 : _c.version;
+            _this.appName = (_a = Constants.expoConfig) === null || _a === void 0 ? void 0 : _a.name;
+            _this.appId = (_b = Constants.expoConfig) === null || _b === void 0 ? void 0 : _b.slug;
+            _this.appVersion = (_c = Constants.expoConfig) === null || _c === void 0 ? void 0 : _c.version;
             _this.screenSize = width + "x" + height;
             _this.platform = Device.modelId;
             _this.model = Device.modelName;
