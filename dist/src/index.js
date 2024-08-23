@@ -66,7 +66,7 @@ var ExpoMixpanelAnalytics = (function () {
             _this.appName = (_a = Constants.expoConfig) === null || _a === void 0 ? void 0 : _a.name;
             _this.appId = (_b = Constants.expoConfig) === null || _b === void 0 ? void 0 : _b.slug;
             _this.appVersion = (_c = Constants.expoConfig) === null || _c === void 0 ? void 0 : _c.version;
-            _this.screenSize = width + "x" + height;
+            _this.screenSize = "".concat(width, "x").concat(height);
             _this.platform = Device.modelId;
             _this.model = Device.modelName;
             AsyncStorage.getItem(ASYNC_STORAGE_KEY, function (_, result) {
@@ -154,7 +154,7 @@ var ExpoMixpanelAnalytics = (function () {
                 $token: this.token,
                 $distinct_id: this.userId
             };
-            data["$" + operation] = props;
+            data["$".concat(operation)] = props;
             this._pushProfile(data);
         }
     };
@@ -184,11 +184,11 @@ var ExpoMixpanelAnalytics = (function () {
         }
         var buffer = new Buffer(JSON.stringify(data)).toString("base64");
         var isIdentityAPI = event.name === '$create_alias' ? '#identity-create-alias' : '';
-        return fetch(MIXPANEL_API_URL + "/track" + isIdentityAPI + "/?data=" + buffer);
+        return fetch("".concat(MIXPANEL_API_URL, "/track").concat(isIdentityAPI, "/?data=").concat(buffer));
     };
     ExpoMixpanelAnalytics.prototype._pushProfile = function (data) {
         data = new Buffer(JSON.stringify(data)).toString("base64");
-        return fetch(MIXPANEL_API_URL + "/engage/?data=" + data);
+        return fetch("".concat(MIXPANEL_API_URL, "/engage/?data=").concat(data));
     };
     return ExpoMixpanelAnalytics;
 }());
